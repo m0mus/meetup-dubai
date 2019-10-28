@@ -458,6 +458,9 @@ public class Greeting {
 6. Modify `GreetResource.createResponse` method
 
 ```java
+@PersistenceContext
+private EntityManager entityManager;
+
 private JsonObject createResponse(String who) {
     Greeting greeting = this.entityManager.find(Greeting.class, who);
     String message;
