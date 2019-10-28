@@ -585,14 +585,19 @@ curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics | json_p
 
 ### Make GraalVM native image
 
-1. Download GraalVM
+1. Download [GraalVM 19.2.1](https://github.com/oracle/graal/releases/tag/vm-19.2.1) and extract it to `~/graalvm` directory.
 
 2. Install `native-image` feature
+
+```bash
+sudo yum install gcc, zlib-devel
+~/graalvm/graalvm-ce-19.2.1/bin/gu install native-image
+```
 
 3. Create `GRAALVM_HOME` environment variable
 
 ```bash
-export GRAALVM_HOME=~/graalvm/graalvm-ce-19.2.1/Contents/Home
+export GRAALVM_HOME=~/graalvm/graalvm-ce-19.2.1
 ```
 
 4. Build a native image
