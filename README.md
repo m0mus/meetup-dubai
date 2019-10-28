@@ -402,7 +402,7 @@ docker run -d -p 9092:9082 -p 8082:8082 --name=h2 nemerosa/h2
 
 ```
 javax.sql.DataSource.test.dataSourceClassName=org.h2.jdbcx.JdbcDataSource
-javax.sql.DataSource.test.dataSource.url=jdbc:h2:mem:test;INIT=CREATE TABLE IF NOT EXISTS GREETING (FIRSTPART VARCHAR NOT NULL, SECONDPART VARCHAR NOT NULL, PRIMARY KEY (FIRSTPART))\\;MERGE INTO GREETING (FIRSTPART, SECONDPART) VALUES ('hello', 'world')
+javax.sql.DataSource.test.dataSource.url=jdbc:h2:mem:test;INIT=CREATE TABLE IF NOT EXISTS GREETING (NAME VARCHAR NOT NULL, GREETING VARCHAR NOT NULL, PRIMARY KEY (NAME))\\;MERGE INTO GREETING (NAME, GREETING) VALUES ('world', 'hello')
 javax.sql.DataSource.test.dataSource.user=sa
 javax.sql.DataSource.test.dataSource.password=
 ```
@@ -410,7 +410,6 @@ javax.sql.DataSource.test.dataSource.password=
 5. ​​Add an entity `Greeting.java`
 
 ```java
-package io.helidon.examples.quickstart.mp;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -421,36 +420,35 @@ import java.util.Objects;
 public class Greeting {
 
     @Id
-    @Column(name = "FIRSTPART", insertable = true, nullable = false, updatable = false)
-    private String firstPart;
+    @Column(name = "NAME", insertable = true, nullable = false, updatable = false)
+    private String name;
 
     @Basic(optional = false)
-    @Column(name = "SECONDPART", insertable = true, nullable = false, updatable = true)
-    private String secondPart;
+    @Column(name = "GREETING", insertable = true, nullable = false, updatable = true)
+    private String greeting;
 
     @Deprecated
     protected Greeting() {
         super();
     }
 
-    public Greeting(final String firstPart, final String secondPart) {
+    public Greeting(final String name, final String greeting) {
         super();
-        this.firstPart = Objects.requireNonNull(firstPart);
-        this.secondPart = Objects.requireNonNull(secondPart);
+        this.name = Objects.requireNonNull(name);
+        this.greeting = Objects.requireNonNull(greeting);
     }
 
-    public void setSecondPart(final String secondPart) {
-        this.secondPart = Objects.requireNonNull(secondPart);
+    public void setGreeting(final String greeting) {
+        this.greeting = Objects.requireNonNull(greeting);
     }
 
     @Override
     public String toString() {
-        return this.secondPart;
+        return this.greeting;
     }
 
-
-    public String secondPart() {
-        return secondPart;
+    public String getGreeting() {
+        return greeting;
     }
 }
 ```
@@ -468,10 +466,9 @@ private JsonObject createResponse(String who) {
         // not in database
         message = greetingProvider.getMessage();
     } else {
-        message = greeting.secondPart();
+        message = greeting.getGreeting();
     }
     String msg = String.format("%s %s!", message, who);
-
 
     return JSON.createObjectBuilder()
             .add("message", msg)
@@ -482,16 +479,16 @@ private JsonObject createResponse(String who) {
 7. Add GreetResource.dbCreateMapping method
 
 ```java
-@Path("/db/{firstPart}")
+@Path("/db/{name}")
 @POST
 @Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.TEXT_PLAIN)
 @Transactional(Transactional.TxType.REQUIRED)
-public Response dbCreateMapping(@PathParam("firstPart") String firstPart, String secondPart) {
-    Greeting greeting = new Greeting(firstPart, secondPart);
-    this.entityManager.persist(greeting);
+public Response dbCreateMapping(@PathParam("name") String name, String greeting) {
+    Greeting g = new Greeting(name, greeting);
+    this.entityManager.persist(g);
 
-    return Response.created(URI.create("/greet/" + firstPart)).build();
+    return Response.created(URI.create("/greet/" + name)).build();
 }
 ```
 
@@ -506,20 +503,20 @@ curl -i http://localhost:8080/greet/helidon
 9. Add GreetResource.dbUpdateMapping method
 
 ```java
-@Path("/db/{firstPart}")
+@Path("/db/{name}")
 @PUT
 @Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.TEXT_PLAIN)
 @Transactional(Transactional.TxType.REQUIRED)
-public Response dbUpdateMapping(@PathParam("firstPart") String firstPart, String secondPart) {
+public Response dbUpdateMapping(@PathParam("name") String name, String greeting) {
     try {
-        Greeting greeting = this.entityManager.getReference(Greeting.class, firstPart);
-        greeting.setSecondPart(secondPart);
+        Greeting g = this.entityManager.getReference(Greeting.class, name);
+        g.setGreeting(greeting);
     } catch (EntityNotFoundException e) {
-        return Response.status(404).entity("Mapping for " + firstPart + " not found").build();
+        return Response.status(404).entity("Mapping for " + name + " not found").build();
     }
 
-    return Response.ok(firstPart).build();
+    return Response.ok(name).build();
 }
 ```
 
