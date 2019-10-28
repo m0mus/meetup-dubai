@@ -76,14 +76,14 @@ docker run --rm -p 8080:8080 helidon-quickstart-mp:latest
 1. HealthCheck 1.0 endpoint
 
 ```bash
-curl -X GET http://localhost:8080/health
+curl -X GET http://localhost:8080/health | jq .
 ```
 
 2. HealthCheck 2.0 liveness and readiness checks
 
 ```bash
-curl -X GET http://localhost:8080/health/live
-curl -X GET http://localhost:8080/health/ready
+curl -X GET http://localhost:8080/health/live | jq .
+curl -X GET http://localhost:8080/health/ready | jq .
 ```
 
 #### Adding a custom readiness health check which is always 'DOWN'
@@ -122,7 +122,7 @@ java -jar target/helidon-quickstart-mp.jar
 3. Test
 
 ```bash
-curl -X GET http://localhost:8080/health/ready
+curl -X GET http://localhost:8080/health/ready | jq .
 ```
 
 #### Read state from a configuration property
@@ -163,7 +163,7 @@ java -jar target/helidon-quickstart-mp.jar
 4. Test
 
 ```bash
-curl -X GET http://localhost:8080/health/ready
+curl -X GET http://localhost:8080/health/ready | jq .
 ```
 
 5. Pass state using a system property.
@@ -231,7 +231,7 @@ java -jar target/helidon-quickstart-mp.jar
 6. Test (must be down)
 
 ```bash
-curl -X GET http://localhost:8080/health/ready
+curl -X GET http://localhost:8080/health/ready | jq .
 ```
 
 7. Without stopping the app update `mp.yaml` file. Change `app.state` property to `up`.
@@ -244,7 +244,7 @@ app:
 8. Test again (must be UP)
 
 ```bash
-curl -X GET http://localhost:8080/health/ready
+curl -X GET http://localhost:8080/health/ready | jq .
 ```
 
 > It may take some time to propagate the change. If status is not changed to UP from the first try, re-run the command.
@@ -262,19 +262,19 @@ curl -X GET http://localhost:8080/metrics
 2. Metrics in JSON
 
 ```bash
-curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics | json_pp
+curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics | jq .
 ```
 
 3. Base metrics only
 
 ```bash
-curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics/base | json_pp
+curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics/base | jq .
 ```
 
 4. Metrics metadata
 
 ```bash
-curl -H 'Accept: application/json' -X OPTIONS http://localhost:8080/metrics | json_pp
+curl -H 'Accept: application/json' -X OPTIONS http://localhost:8080/metrics | jq .
 ```
 
 
@@ -323,8 +323,8 @@ curl -X GET http://localhost:8080/greet/Dmitry
 5. Test it
 
 ```bash
-curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics/application | json_pp
-curl -H 'Accept: application/json' -X OPTIONS http://localhost:8080/metrics/application | json_pp
+curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics/application | jq .
+curl -H 'Accept: application/json' -X OPTIONS http://localhost:8080/metrics/application | jq .
 ```
 
 ### JPA
