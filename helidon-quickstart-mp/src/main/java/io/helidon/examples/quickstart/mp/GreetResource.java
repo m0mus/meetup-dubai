@@ -59,9 +59,6 @@ public class GreetResource {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Inject
-    private Transaction transaction;
-
     /**
      * The greeting message provider.
      */
@@ -135,32 +132,32 @@ public class GreetResource {
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
-    @Path("/db/{firstPart}")
+    @Path("/db/{name}")
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public Response dbCreateMapping(@PathParam("firstPart") String firstPart, String secondPart) {
-        Greeting greeting = new Greeting(firstPart, secondPart);
-        this.entityManager.persist(greeting);
+    public Response dbCreateMapping(@PathParam("name") String name, String greeting) {
+        Greeting g = new Greeting(name, greeting);
+        this.entityManager.persist(g);
 
-        return Response.created(URI.create("/greet/" + firstPart)).build();
+        return Response.created(URI.create("/greet/" + name)).build();
     }
 
-    @Path("/db/{firstPart}")
+    @Path("/db/{name}")
     @PUT
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     @Transactional(Transactional.TxType.REQUIRED)
-    public Response dbUpdateMapping(@PathParam("firstPart") String firstPart, String secondPart) {
+    public Response dbUpdateMapping(@PathParam("name") String name, String greeting) {
         try {
-            Greeting greeting = this.entityManager.getReference(Greeting.class, firstPart);
-            greeting.setSecondPart(secondPart);
+            Greeting g = this.entityManager.getReference(Greeting.class, name);
+            g.setGreeting(greeting);
         } catch (EntityNotFoundException e) {
-            return Response.status(404).entity("Mapping for " + firstPart + " not found").build();
+            return Response.status(404).entity("Mapping for " + name + " not found").build();
         }
 
-        return Response.ok(firstPart).build();
+        return Response.ok(name).build();
     }
 
     private JsonObject createResponse(String who) {
@@ -170,7 +167,7 @@ public class GreetResource {
             // not in database
             message = greetingProvider.getMessage();
         } else {
-            message = greeting.secondPart();
+            message = greeting.getGreeting();
         }
         String msg = String.format("%s %s!", message, who);
 

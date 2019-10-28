@@ -9,12 +9,12 @@ import java.util.Objects;
 public class Greeting {
 
     @Id
-    @Column(name = "FIRSTPART", insertable = true, nullable = false, updatable = false)
-    private String firstPart;
+    @Column(name = "NAME", insertable = true, nullable = false, updatable = false)
+    private String name;
 
     @Basic(optional = false)
-    @Column(name = "SECONDPART", insertable = true, nullable = false, updatable = true)
-    private String secondPart;
+    @Column(name = "GREETING", insertable = true, nullable = false, updatable = true)
+    private String greeting;
 
     /**
      * Creates a new {@link Greeting}; required by the JPA
@@ -33,49 +33,47 @@ public class Greeting {
     /**
      * Creates a new {@link Greeting}.
      *
-     * @param firstPart the first part of the greeting; must not be
+     * @param name the name; primary key; must not be
      * {@code null}
      *
-     * @param secondPart the second part of the greeting; must not be
+     * @param greeting the greeting; must not be
      * {@code null}
      *
-     * @exception NullPointerException if {@code firstPart} or {@code
-     * secondPart} is {@code null}
+     * @exception NullPointerException if {@code name} or {@code
+     * greeting} is {@code null}
      */
-    public Greeting(final String firstPart, final String secondPart) {
+    public Greeting(final String name, final String greeting) {
         super();
-        this.firstPart = Objects.requireNonNull(firstPart);
-        this.secondPart = Objects.requireNonNull(secondPart);
+        this.name = Objects.requireNonNull(name);
+        this.greeting = Objects.requireNonNull(greeting);
     }
 
     /**
      * Sets the second part of this greeting.
      *
-     * @param secondPart the second part of this greeting; must not be
+     * @param greeting must not be
      * {@code null}
      *
-     * @exception NullPointerException if {@code secondPart} is {@code
+     * @exception NullPointerException if {@code greeting} is {@code
      * null}
      */
-    public void setSecondPart(final String secondPart) {
-        this.secondPart = Objects.requireNonNull(secondPart);
+    public void setGreeting(final String greeting) {
+        this.greeting = Objects.requireNonNull(greeting);
     }
 
     /**
-     * Returns a {@link String} representation of the second part of
-     * this {@link Greeting}.
+     * Returns a {@link String} representation of greeting {@link Greeting}.
      *
      * <p>This method never returns {@code null}.</p>
      *
-     * @return a non-{@code null} {@link String} representation of the
-     * second part of this {@link Greeting}
+     * @return a non-{@code null} {@link String} representation of greeting {@link Greeting}
      */
     @Override
     public String toString() {
-        return this.secondPart;
+        return this.greeting;
     }
 
-    public String secondPart() {
-        return secondPart;
+    public String getGreeting() {
+        return greeting;
     }
 }
