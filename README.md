@@ -398,7 +398,7 @@ docker run -d -p 9092:9082 -p 8082:8082 --name=h2 nemerosa/h2
 </persistence>
 ```
 
-4. Configure data source in the application configuration. Add the following to `META-INF/microprofiloe-config.xml`
+4. Configure data source in the application configuration. Add the following to `META-INF/microprofile-config.xml`
 
 ```
 javax.sql.DataSource.test.dataSourceClassName=org.h2.jdbcx.JdbcDataSource
